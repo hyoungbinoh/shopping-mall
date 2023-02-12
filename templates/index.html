@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+            integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+            crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+            integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+            crossorigin="anonymous"></script>
+
+    <title>스파르타코딩클럽 | 부트스트랩 연습하기</title>
+    <link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet">
+
+<style>
+    * {
+        font-family: 'Jua', sans-serif;
+    }
+
+    .wrap{
+        width: 500px;
+        margin: auto;
+
+    }
+
+    .image {
+        background-color: green;
+
+        width: 400px;
+        height: 250px;
+        margin: auto;
+
+        background-image: url("http://www.aynuri.co.kr/data/photos/20201044/art_16041393212395_7e49c1.jpg");
+        background-size: cover;
+        background-position: center;
+    }
+
+    .font_size {
+        font-size: 20px;
+    }
+
+    .btn-center {
+        width: 100px;
+        margin: auto;
+        display: block;
+    }
+
+    .color {
+        color: blue;
+    }
+</style>
+    <script>
+        $(document).ready(function(){
+	        q1(); showOrder();
+        });
+
+        function q1() {
+            $.ajax({
+                type: "GET",
+                url: "http://spartacodingclub.shop/sparta_api/rate",
+                data: {},
+                success: function (response){
+                    let rate = response['rate']
+                    let temp_html = `<h5 class="color">달러-원 환율 : ${rate}</h5>`
+                    $('#now_rate').append(temp_html)
+
+                }
+            })
+
+        }
+
+        function makeOrder() {
+                let name = $('#user_name').val()
+                let number = $('#number').val()
+                let address = $('#user_address').val()
+                let phone = $('#phone_number').val()
+
+                $.ajax({
+                    type: "POST",
+                    url: "/order",
+                    data: {name_give:name, number_give:number, address_give:address, phone_give:phone},
+                    success: function (response) {
+                             if(response["result"]=="success"){
+                            alert(response["msg"]);
+                            window.location.reload()
+                        }
+                    }
+                })
+        }
+
+        function showOrder() {
+            $.ajax({
+                type: "GET",
+                url: "/order",
+                data: {},
+                success: function (response) {
+                    if (response["result"] == "success") {
+                        let orders = response['all_orders']
+                        for (let i = 0; i < orders.length; i++) {
+                            let name = orders[i]['name']
+                            let number = orders[i]['number']
+                            let address = orders[i]['address']
+                            let phone = orders[i]['phone']
+
+                            let temp_html = `<tr>
+                                                <td>${name}</td>
+                                                <td>${number}</td>
+                                                <td>${address}</td>
+                                                <td>${phone}</td>
+                                            </tr>`
+
+                            $('#orders-box').append(temp_html)
+                        }
+                    }
+                }
+            })
+        }
+    </script>
+</head>
+
+<body>
+<div class="wrap">
+    <div class="image"></div>
+    <h1>손난로 팝니다<span class="font_size">가격: 2000원/개</span></h1>
+    <h5>가슴 한켠에 바람이 송송 들어오는 추운 겨울, 내 마음을 따뜻하게 데워줄 따뜻한 손난로 챙기세요. 우리 옆구리는 시렵지만 마음 만큼은 따뜻해지자구요~</h5>
+    <div id="now_rate">
+    </div>
+    <div>
+        <div class="input-group mb-3">
+            <div class="input-group-prepend">
+                <span class="input-group-text">주문자이름</span>
+            </div>
+            <input id="user_name" type="text" class="form-control" aria-label="Default" aria-describedby="inputGroup-sizing-default">
+        </div>
+        <div class="input-group mb-3">
+            <div class="input-group-prepend">
+                <label class="input-group-text">수량</label>
+            </div>
+            <select class="custom-select" id="number">
+                <option selected>--수량을 선택해주세요--</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+            </select>
+        </div>
+        <div class="input-group mb-3">
+            <div class="input-group-prepend">
+                <span class="input-group-text">주소</span>
+            </div>
+            <input id="user_address" type="text" class="form-control" aria-label="Default" aria-describedby="inputGroup-sizing-default">
+        </div>
+        <div class="input-group mb-3">
+            <div class="input-group-prepend">
+                <span class="input-group-text">전화번호</span>
+            </div>
+            <input id="phone_number" type="text" class="form-control" aria-label="Default" aria-describedby="inputGroup-sizing-default">
+        </div>
+    </div>
+    <button onclick="makeOrder()" class="btn btn-primary btn-center" type="submit">주문하기</button>
+    <div class="reviews">
+        <table class="table">
+            <thead>
+            <tr>
+                <th scope="col">주문자이름</th>
+                <th scope="col">수량</th>
+                <th scope="col">주소</th>
+                <th scope="col">전화번호</th>
+            </tr>
+            </thead>
+            <tbody id="orders-box">
+            </tbody>
+        </table>
+    </div>
+</div>
+
+</body>
+
+</html>
